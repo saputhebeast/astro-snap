@@ -1,7 +1,18 @@
 import { traced } from "@sliit-foss/functions";
 import context from "express-http-context";
-import { retrievedUserById, updateUserById } from "../repository/user.repository";
-import { errors } from "../utils";
+import { retrievedUserByEmail, retrievedUserById, saveUser, updateUserById } from "../repository/user.repository";
+import { errors, hashPassword } from "../utils";
+
+export const addUser = async (user) => {
+  user.password = await hashPassword(user.password);
+
+  const dbUser = await traced(retrievedUserByEmail)(user.email);
+  if (dbUser) {
+    throw errors.user_already_exists;
+  }
+
+  return traced(saveUser)(user);
+};
 
 export const getUser = async (id) => {
   const currentUser = context.get("user");
