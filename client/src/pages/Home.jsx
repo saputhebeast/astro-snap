@@ -1,12 +1,12 @@
-import React from "react"
-import { Link } from "react-router-dom"
+import React from 'react'
+import Header from "@/components/layout/Header.jsx";
 
 const Home = () => {
     return (
-        <div>
-            <h1 className="underline">Home Page</h1>
-            <Link to="contact">Contact</Link>
-        </div>
+        <>
+            <Header />
+            <h1 className="">Home Page</h1>
+        </>
     )
 }
 
