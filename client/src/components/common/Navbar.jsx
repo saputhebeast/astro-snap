@@ -1,14 +1,18 @@
 import React from "react";
-import { Link, useNavigate } from "react-router-dom"; // Import from react-router-dom
+import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
+import { useDispatch } from "react-redux";
+import { clearAuthUser } from "@/store/user.js";
 
 const Navbar = () => {
     const navigate = useNavigate();
+    const dispatch = useDispatch();
 
     const token = localStorage.getItem("token");
 
     const handleLogout = () => {
         localStorage.removeItem("token");
+        dispatch(clearAuthUser);
         navigate("/login");
     }
 
