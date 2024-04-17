@@ -4,7 +4,15 @@ import { useDispatch } from 'react-redux';
 import { default as jwtDecode } from 'jwt-decode';
 import { setAuthUser } from "@/store/user.js";
 
-const protectedRoutes = [''];
+const protectedRoutes = [
+    '',
+    'interactive-solar-system',
+    'astronomy-picture-of-the-day',
+    'mars-rover-photo-gallery',
+    'live-space-missions-tracker',
+    'skywatching-diaries',
+    'educational-resources'
+];
 
 const useAuth = () => {
     const navigate = useNavigate();

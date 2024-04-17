@@ -23,10 +23,10 @@ const Navbar = () => {
                 <span className="font-semibold">Astro Snap</span>
             </Link>
             <nav className="hidden md:flex items-center space-x-4 flex-1">
-                <Link to="/" className="font-medium">Home</Link>
-                <Link to="/services" className="font-medium">Services</Link>
-                <Link to="/about" className="font-medium">About</Link>
-                <Link to="/contact" className="font-medium">Contact</Link>
+                <Link to="/astronomy-picture-of-the-day" className="font-medium">Astronomy Picture of the Day</Link>
+                <Link to="/mars-rover-photo-gallery" className="font-medium">Mars Rover Photo Gallery</Link>
+                <Link to="/live-space-missions-tracker" className="font-medium">Live Space Missions Tracker</Link>
+                <Link to="/educational-news" className="font-medium">Educational News</Link>
             </nav>
                 {
                     localStorage.getItem("token") ? (

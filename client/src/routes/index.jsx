@@ -1,19 +1,26 @@
 import { Route, Routes } from 'react-router-dom'
 import Login from '@/pages/Login.jsx'
-import Contact from '@/pages/Contact'
-import Home from "@/pages/Home.jsx";
 import Register from "@/pages/Register.jsx";
-import useAuth from "@/hooks/auth.jsx";
+import useAuth from "@/hooks/useAuth.jsx";
+import AstronomyPictureOfTheDay from "@/pages/main/AstronomyPictureOfTheDay.jsx";
+import MarsRoverPhotoGallery from "@/pages/main/MarsRoverPhotoGallery.jsx";
+import SkywatchingDiaries from "@/pages/main/SkywatchingDiaries.jsx";
+import EducationalNews from "@/pages/main/EducationalNews.jsx";
+import LiveSpaceMissionsTracker from "@/pages/main/LiveSpaceMissionsTracker.jsx";
 
 const AnimatedRoutes = () => {
     useAuth();
 
     return (
         <Routes>
-            <Route path="/" element={<Home/>}/>
             <Route index path="login" element={<Login/>} />
             <Route path="register" element={<Register/>}/>
-            <Route path="contact" element={<Contact/>}/>
+            <Route path="astronomy-picture-of-the-day" element={<AstronomyPictureOfTheDay/>}/>
+            <Route path="mars-rover-photo-gallery" element={<MarsRoverPhotoGallery/>}/>
+            <Route path="live-space-missions-tracker" element={<LiveSpaceMissionsTracker/>}/>
+            <Route path="/" element={<SkywatchingDiaries/>}/>
+            <Route path="educational-news" element={<EducationalNews/>}/>
+            <Route path="*" element={<h1>Not Found</h1>} />
         </Routes>
     )
 }
