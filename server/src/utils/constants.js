@@ -10,5 +10,6 @@ export const errors = {
   token_expired: createError(401, "Token has expired"),
   no_permission: createError(403, "You don't have permission"),
   user_already_exists: createError(409, "User already exists"),
-  user_not_found: createError(404, "User not found")
+  user_not_found: createError(404, "User not found"),
+  post_not_found: createError(404, "Post not found")
 };
