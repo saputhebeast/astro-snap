@@ -2,10 +2,10 @@ import express from "express";
 import { celebrate, Segments } from "celebrate";
 import { traced, tracedAsyncHandler } from "@sliit-foss/functions";
 import { default as filterQuery } from "@sliit-foss/mongoose-filter-query";
+import context from "express-http-context";
 import { response } from "../../utils";
 import { addPostSchema } from "../../schema/post.schema";
-import context from "express-http-context";
-import { addPost, getPost, getPosts, removePost } from "../../service/post.service";
+import { addRemoveLike, addPost, getPost, getPosts, removePost } from "../../service/post.service";
 
 const posts = express.Router();
 
@@ -16,6 +16,15 @@ posts.post(
     const post = await traced(addPost)(req.body, context.get("user"));
     return response({ res, message: "Post added successfully", data: post });
   })
+);
+
+// add like and remove like
+posts.post(
+    "/:id/like", // post id
+    tracedAsyncHandler(async (req, res) => {
+        const post = await traced(addRemoveLike)(req.params.id, context.get("user"));
+        return response({ res, message: "Post retrieved successfully", data: post });
+    })
 );
 
 posts.get(
