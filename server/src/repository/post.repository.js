@@ -1,8 +1,7 @@
 import Post from "../model/post.model";
 
 const populate = [
-    { path: "user", select: "_id name email" },
-  { path: "likes", select: "_id name email" }
+    { path: "user", select: "_id name email" }
 ];
 
 export const savePost = (post) => {

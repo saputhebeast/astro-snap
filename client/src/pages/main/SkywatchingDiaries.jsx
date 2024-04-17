@@ -3,6 +3,7 @@ import Header from "@/components/layout/Header.jsx";
 import axios from "axios";
 import Post from "@/components/common/Post.jsx";
 import NewPostModal from "@/components/common/NewPostModal.jsx";
+import { useSelector } from 'react-redux';
 
 const SkywatchingDiaries = () => {
     const [posts, setPosts] = useState([]);
@@ -10,6 +11,9 @@ const SkywatchingDiaries = () => {
     const [newPost, setNewPost] = useState({ photo_url: '', caption: '' });
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState('');
+
+    const currentUser = useSelector(state => state.user.authUser);
+    const currentUserId =  currentUser._id;
 
     const fetchPosts = async () => {
         setIsLoading(true);
@@ -19,7 +23,11 @@ const SkywatchingDiaries = () => {
                     Authorization: `Bearer ${localStorage.getItem('token')}`
                 }
             });
-            setPosts(response.data.data || []);
+            const postsWithLikeStatus = response.data.data.map(post => ({
+                ...post,
+                isLiked: post.likes.some(like => like._id === currentUserId),
+            }));
+            setPosts(postsWithLikeStatus);
             setError('');
         } catch (error) {
             console.error("Error fetching posts:", error);
@@ -29,21 +37,34 @@ const SkywatchingDiaries = () => {
         }
     };
 
-    useEffect(() => {
-        fetchPosts();
-    }, []);
 
-    const handleLike = (id) => {
-        setPosts(posts.map(post => {
-            if (post.id === id) {
-                return {
-                    ...post,
-                    likes_count: post.isLiked ? post.likes_count - 1 : post.likes_count + 1,
-                    isLiked: !post.isLiked
-                };
+    useEffect(() => {
+        if (currentUser) {
+            fetchPosts();
+        }
+    }, [currentUser]);
+
+    const handleLike = async (postId) => {
+        try {
+            const response = await axios.post(`http://localhost:8085/api/v1/post/${postId}/like`, {}, {
+                headers: {
+                    Authorization: `Bearer ${localStorage.getItem('token')}`
+                }
+            });
+
+            if (response.data && response.data.data) {
+                const updatedPost = response.data.data;
+                setPosts((currentPosts) => currentPosts.map(post =>
+                    post._id === postId ? {
+                        ...post,
+                        likes_count: updatedPost.likes_count,
+                        isLiked: updatedPost.likes.some(like => like._id === currentUserId),
+                    } : post
+                ));
             }
-            return post;
-        }));
+        } catch (error) {
+            console.error("Error liking post:", error);
+        }
     };
 
     const handleBookmark = (id) => {
@@ -74,7 +95,7 @@ const SkywatchingDiaries = () => {
             setShowModal(false);
             setNewPost({ photo_url: '', caption: '' });
         } catch (e) {
-            console.log("Error adding new post:", e);
+            console.error("Error adding new post:", e);
         }
     };
 
@@ -92,7 +113,7 @@ const SkywatchingDiaries = () => {
                     <div className="text-red-500">{error}</div>
                 ) : posts.length > 0 ? (
                     posts.map(post => (
-                        <Post key={post.id} post={post} onLike={handleLike} onBookmark={handleBookmark} />
+                        <Post key={post._id} post={post} onLike={() => handleLike(post._id)} onBookmark={handleBookmark} />
                     ))
                 ) : (
                     <div>No posts available. Be the first to post!</div>
