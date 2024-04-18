@@ -18,7 +18,7 @@ const SkywatchingDiaries = () => {
     const fetchPosts = async () => {
         setIsLoading(true);
         try {
-            const response = await axios.get('http://localhost:8085/api/v1/post', {
+            const response = await axios.get('http://localhost:8085/api/v1/post?sort[created_at]=-1', {
                 headers: {
                     Authorization: `Bearer ${localStorage.getItem('token')}`
                 }
