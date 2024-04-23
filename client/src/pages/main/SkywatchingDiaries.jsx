@@ -11,7 +11,7 @@ const SkywatchingDiaries = () => {
     const [newPost, setNewPost] = useState({ photo_url: '', caption: '' });
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState('');
-
+    
     const currentUser = useSelector(state => state.user.authUser);
     const currentUserId =  currentUser._id;
 
@@ -79,8 +79,7 @@ const SkywatchingDiaries = () => {
         }));
     };
 
-    const addNewPost = async (e) => {
-        e.preventDefault();
+    const addNewPost = async (newPost) => {
         try {
             const postData = {
                 photo_url: newPost.photo_url,
