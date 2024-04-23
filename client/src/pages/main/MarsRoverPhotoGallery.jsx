@@ -8,7 +8,7 @@ const MarsRoverPhotoGallery = () => {
     const [currentPage, setCurrentPage] = useState(1);
     const [hoveredPhoto, setHoveredPhoto] = useState(null);
 
-    const ITEMS_PER_PAGE = 18;
+    const ITEMS_PER_PAGE = 16;
 
     useEffect(() => {
         const fetchData = async () => {
