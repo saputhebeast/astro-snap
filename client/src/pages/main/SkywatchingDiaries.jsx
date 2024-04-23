@@ -101,22 +101,28 @@ const SkywatchingDiaries = () => {
     return (
         <>
             <Header />
-            <div className="max-w-4xl mx-auto p-4 mt-8 rounded-lg">
-                <h1 className="text-2xl font-bold text-center mb-4">Skywatching Diaries</h1>
-                <button onClick={() => setShowModal(true)} className="mb-4 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
-                    Add New Post
-                </button>
-                {isLoading ? (
-                    <div>Loading posts...</div>
-                ) : error ? (
-                    <div className="text-red-500">{error}</div>
-                ) : posts.length > 0 ? (
-                    posts.map(post => (
-                        <Post key={post._id} post={post} onLike={() => handleLike(post._id)} onBookmark={handleBookmark} />
-                    ))
-                ) : (
-                    <div>No posts available. Be the first to post!</div>
-                )}
+            <div className="container mx-auto p-8">
+                <h1 className="text-3xl font-bold text-center mb-8">Skywatching Diaries</h1>
+                <div className="grid gap-8">
+                    {isLoading ? (
+                        <div className="text-center">Loading posts...</div>
+                    ) : error ? (
+                        <div className="text-red-500">{error}</div>
+                    ) : posts.length > 0 ? (
+                        posts.map(post => (
+                            <div key={post._id} className="max-w-xl mx-auto">
+                                <Post post={post} onLike={() => handleLike(post._id)} onBookmark={handleBookmark} />
+                            </div>
+                        ))
+                    ) : (
+                        <div className="text-center">No posts available. Be the first to post!</div>
+                    )}
+                </div>
+                <div className="fixed bottom-8 right-8">
+                    <button onClick={() => setShowModal(true)} className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+                        Add New Post
+                    </button>
+                </div>
                 {showModal && (
                     <NewPostModal
                         onClose={() => setShowModal(false)}
