@@ -1,36 +1,59 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
 import Header from "@/components/layout/Header.jsx";
+import { fetchEducationalImages } from "@/services/education.js";
+import { MutatingDots } from 'react-loader-spinner';
 
 const EducationalNews = () => {
     const [images, setImages] = useState([]);
+    const [isLoading, setIsLoading] = useState(true);
 
     useEffect(() => {
-        const fetchImages = async () => {
+        const fetchData = async () => {
+            setIsLoading(true);
             try {
-                const response = await axios.get('https://images-api.nasa.gov/search', {
-                    params: {
-                        q: 'education',
-                        media_type: 'image',
-                    },
-                });
-                const sortedImages = response.data.collection.items.sort((a, b) => {
-                    return new Date(b.data[0].date_created) - new Date(a.data[0].date_created);
-                });
-                setImages(sortedImages);
+                const imagesData = await fetchEducationalImages();
+                setImages(imagesData);
             } catch (error) {
                 console.error("Error fetching educational resources:", error);
             }
+            setIsLoading(false);
         };
 
-        fetchImages();
+        fetchData();
     }, []);
 
-    // Helper function to format the date
     const formatDate = (dateString) => {
         const options = { year: 'numeric', month: 'long', day: 'numeric' };
         return new Date(dateString).toLocaleDateString(undefined, options);
     };
+
+    if (isLoading) {
+        return (
+            <div style={{
+                position: 'fixed',
+                top: 0,
+                left: 0,
+                width: '100%',
+                height: '100%',
+                display: 'flex',
+                justifyContent: 'center',
+                alignItems: 'center',
+                backgroundColor: 'rgba(0, 0, 0, 0.1)',
+                zIndex: 50
+            }}>
+                <MutatingDots
+                    height="100"
+                    width="100"
+                    color="#4fa94d"
+                    secondaryColor="#4fa94d"
+                    radius="12.5"
+                    ariaLabel="mutating-dots-loading"
+                    wrapperClass="flex justify-center items-center"
+                    visible={true}
+                />
+            </div>
+        );
+    }
 
     return (
         <>

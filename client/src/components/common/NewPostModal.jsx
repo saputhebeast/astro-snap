@@ -107,7 +107,7 @@ const NewPostModal = ({ onClose, newPost, setNewPost, onSubmit }) => {
         <div className="fixed inset-0 bg-black bg-opacity-60 overflow-y-auto h-full w-full flex justify-center items-center transition-opacity duration-300" id="my-modal">
             <div className="relative mx-auto p-8 border w-full max-w-lg shadow-lg rounded-lg bg-white transition-transform transform duration-300 ease-out" style={{ translateY: 'scale(0.95)' }}>
                 <div className="text-center">
-                    <h3 className="text-2xl font-semibold text-gray-900 mb-6">Add New Post</h3>
+                    <h3 className="text-2xl font-semibold text-gray-900 mb-6">Add New Skywatching Diary</h3>
                     <input
                         type="file"
                         onChange={handleImageChange}
@@ -136,7 +136,7 @@ const NewPostModal = ({ onClose, newPost, setNewPost, onSubmit }) => {
                             disabled={isUploading}
                             className={`px-6 py-2 text-white font-medium rounded-lg ${isUploading ? 'bg-blue-300' : 'bg-blue-500 hover:bg-blue-700'} focus:outline-none disabled:opacity-75`}
                         >
-                            {isUploading ? 'Uploading...' : 'Post'}
+                            {isUploading ? 'Uploading...' : 'Here we goo'}
                         </button>
                     </div>
                 </div>

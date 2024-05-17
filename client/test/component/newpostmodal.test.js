@@ -19,7 +19,7 @@ describe('NewPostModal', () => {
         fireEvent.change(input, { target: { value: 'New test post' } });
         expect(input.value).toBe('New test post');
 
-        const submitButton = screen.getByRole('button', { name: /post/i });  // Updated to match the actual button name
+        const submitButton = screen.getByRole('button', { name: /Here we goo/i });  // Updated to match the actual button name
         fireEvent.click(submitButton);
         expect(handleSubmit).toHaveBeenCalled();
     });

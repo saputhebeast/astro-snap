@@ -1,83 +1,93 @@
-import React, {useState} from "react";
-import {Link, useNavigate} from "react-router-dom";
-import axios from 'axios';
-import {Button} from "@/components/ui/Button";
-import {Input} from "@/components/ui/Input";
-import {Label} from "@/components/ui/Label";
-import {Icons} from "@/components/ui/Icons";
+import React from 'react';
+import { useNavigate, Link } from "react-router-dom";
+import { Formik, Form, Field } from 'formik';
+import * as Yup from 'yup';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faEye, faEyeSlash, faSpinner } from '@fortawesome/free-solid-svg-icons';
 import nasa from '../assets/nasa.jpg';
+import { loginUser } from "@/services/auth.js";
+import { Button } from "@/components/ui/Button";
 
 const Login = () => {
     const navigate = useNavigate();
-    const [isLoading, setIsLoading] = useState(false);
-    const [email, setEmail] = useState('');
-    const [password, setPassword] = useState('');
+    const [showPassword, setShowPassword] = React.useState(false);
 
-    const onSubmit = async (event) => {
-        event.preventDefault();
-        setIsLoading(true);
+    const LoginSchema = Yup.object().shape({
+        email: Yup.string().email('Invalid email address').required('Email is required'),
+        password: Yup.string().required('Password is required'),
+    });
 
+    const onSubmit = async (values, { setSubmitting }) => {
+        setSubmitting(true);
         try {
-            const response = await axios.post('http://localhost:8085/api/v1/auth/login', {
-                email,
-                password,
-            });
-            localStorage.setItem('token', response.data.data.access_token);
+            const token = await loginUser(values.email, values.password);
+            localStorage.setItem('token', token);
             navigate('/');
         } catch (error) {
-            console.error('Login failed', error.response || error);
+            console.error(error);
         } finally {
-            setIsLoading(false);
+            setSubmitting(false);
         }
     };
 
     return (
-        <div className="flex h-screen bg-dark-blue-500">
-            <div className="w-1/2 flex justify-center items-center m-10">
-                <img src={nasa} className="rounded-3xl max-w-full h-full" alt="nasa"/>
+        <div className="flex flex-col sm:flex-row h-screen bg-dark-blue-500">
+            <div className="sm:w-1/2 w-full flex justify-center items-center p-4">
+                <img src={nasa} className="rounded-3xl max-w-full h-auto" alt="NASA" />
             </div>
-            <div className="w-1/2 flex flex-col justify-center items-center space-y-4">
-                <h1 className="text-2xl mb-4">Login</h1>
-                <form onSubmit={onSubmit}
-                      className="bg-white p-4 rounded-lg w-full max-w-md">
-                    <div className="grid gap-2">
-                        <div className="grid gap-1">
-                            <Label className="sr-only" htmlFor="email">Email</Label>
-                            <Input
-                                id="email"
-                                className="w-full"
-                                placeholder="Enter your email"
-                                type="email"
-                                autoCapitalize="none"
-                                autoComplete="email"
-                                autoCorrect="off"
-                                disabled={isLoading}
-                                value={email}
-                                onChange={(e) => setEmail(e.target.value)}
-                            />
-                        </div>
-                        <div className="grid gap-1">
-                            <Label className="sr-only" htmlFor="password">Password</Label>
-                            <Input
-                                id="password"
-                                className="w-full"
-                                placeholder="Enter your password"
-                                type="password"
-                                autoCapitalize="none"
-                                autoCorrect="off"
-                                disabled={isLoading}
-                                value={password}
-                                onChange={(e) => setPassword(e.target.value)}
-                            />
-                        </div>
-                        <Button disabled={isLoading}>
-                            {isLoading ? (
-                                <Icons.spinner className="mr-2 h-4 w-4 animate-spin"/>
-                            ) : 'Login'}
-                        </Button>
-                    </div>
-                </form>
-                <p className="text-gray-500">Dont have an account? <Link to="/register" className="underline">Register</Link></p>
+            <div className="sm:w-1/2 w-full flex flex-col justify-center items-center p-4 space-y-4">
+                <h1 className="text-xl sm:text-2xl mb-4">Login</h1>
+                <Formik
+                    initialValues={{ email: '', password: '' }}
+                    validationSchema={LoginSchema}
+                    onSubmit={onSubmit}
+                >
+                    {({ isSubmitting, errors, touched }) => (
+                        <Form className="bg-white p-4 rounded-lg w-full max-w-md">
+                            <div className="grid gap-2">
+                                <div className="grid gap-1">
+                                    <label htmlFor="email" className="font-semibold">Email</label>
+                                    <Field
+                                        name="email"
+                                        type="email"
+                                        placeholder="Enter your email"
+                                        className={`w-full p-2 ${errors.email && touched.email ? 'border border-red-500' : 'border border-gray-300'}`}
+                                    />
+                                    {errors.email && touched.email ? (
+                                        <div className="text-red-500 text-sm">{errors.email}</div>
+                                    ) : null}
+                                </div>
+                                <div className="relative grid gap-1">
+                                    <label htmlFor="password" className="font-semibold">Password</label>
+                                    <Field
+                                        name="password"
+                                        type={showPassword ? "text" : "password"}
+                                        placeholder="Enter your password"
+                                        className={`w-full p-2 ${errors.password && touched.password ? 'border border-red-500' : 'border border-gray-300'}`}
+                                    />
+                                    <div className="absolute inset-y-0 right-0 pr-3 flex items-center text-sm leading-5 mt-8">
+                                        <button
+                                            type="button"
+                                            className="text-gray-600 hover:text-black"
+                                            onClick={() => setShowPassword(!showPassword)}
+                                        >
+                                            <FontAwesomeIcon icon={showPassword ? faEyeSlash : faEye} />
+                                        </button>
+                                    </div>
+                                    {errors.password && touched.password ? (
+                                        <div className="text-red-500 text-sm">{errors.password}</div>
+                                    ) : null}
+                                </div>
+                                <Button type="submit" disabled={isSubmitting}>
+                                    {isSubmitting ? (
+                                        <FontAwesomeIcon icon={faSpinner} spin className="mr-2"/>
+                                    ) : 'Login'}
+                                </Button>
+                            </div>
+                        </Form>
+                    )}
+                </Formik>
+                <p className="text-gray-500">Don’t have an account? <Link to="/register" className="underline">Register</Link></p>
             </div>
         </div>
     );

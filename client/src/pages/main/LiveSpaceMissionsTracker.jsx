@@ -1,38 +1,70 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
 import { MapContainer, TileLayer, Marker } from 'react-leaflet';
 import Header from "@/components/layout/Header.jsx";
 import 'leaflet/dist/leaflet.css';
+import { fetchIssLocation, fetchLocationDetails } from "@/services/iss-location.js";
+import { MutatingDots } from 'react-loader-spinner';
 
 const LiveSpaceMissionsTracker = () => {
     const [issLocation, setIssLocation] = useState([0, 0]);
     const [locationDetails, setLocationDetails] = useState('');
+    const [isLoading, setIsLoading] = useState(true);
+
+    const fetchData = async () => {
+        try {
+            const { latitude, longitude } = await fetchIssLocation();
+            setIssLocation([latitude, longitude]);
+            const details = await fetchLocationDetails(latitude, longitude);
+            setLocationDetails(details);
+        } catch (error) {
+            console.error("Error fetching data:", error);
+        }
+    };
 
     useEffect(() => {
-        const fetchIssLocation = async () => {
-            try {
-                const issResponse = await axios.get('http://api.open-notify.org/iss-now.json');
-                const { latitude, longitude } = issResponse.data.iss_position;
-                setIssLocation([parseFloat(latitude), parseFloat(longitude)]);
-
-                const apiKey = '92109e66a0d04bb5b32edb2d200d2abe';
-                const locationResponse = await axios.get(`https://api.opencagedata.com/geocode/v1/json?q=${latitude}+${longitude}&key=${apiKey}`);
-
-                if (locationResponse.data.results.length > 0) {
-                    setLocationDetails(locationResponse.data.results[0].formatted);
-                } else {
-                    setLocationDetails('Location details not available');
-                }
-            } catch (error) {
-                console.error("Error fetching data:", error);
-            }
+        const initialFetch = async () => {
+            setIsLoading(true);
+            await fetchData();
+            setIsLoading(false);
         };
 
-        fetchIssLocation();
-        const interval = setInterval(fetchIssLocation, 5000);
+        initialFetch();
+
+        const interval = setInterval(() => {
+            fetchData();
+        }, 5000);
 
         return () => clearInterval(interval);
     }, []);
+
+    if (isLoading) {
+        return (
+            <div style={{
+                position: 'fixed',
+                top: 0,
+                left: 0,
+                width: '100%',
+                height: '100%',
+                backgroundColor: 'rgba(0, 0, 0, 0.1)',
+                display: 'flex',
+                justifyContent: 'center',
+                alignItems: 'center',
+                backdropFilter: 'blur(8px)',
+                zIndex: 50
+            }}>
+                <MutatingDots
+                    height="100"
+                    width="100"
+                    color="#4fa94d"
+                    secondaryColor="#4fa94d"
+                    radius="12.5"
+                    ariaLabel="mutating-dots-loading"
+                    wrapperClass="flex justify-center items-center"
+                    visible={true}
+                />
+            </div>
+        );
+    }
 
     return (
         <>

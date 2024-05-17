@@ -15,11 +15,11 @@ class Base {
   }
   static get values() {
     return {
-      PORT: process.env.PORT ?? 3000,
-      APP_ENV: process.env.APP_ENV ?? "local",
-      DB_URL: process.env.DB_URL,
-      JWT_SECRET: process.env.JWT_SECRET,
-      ACCESS_TOKEN_EXPIRY: process.env.ACCESS_TOKEN_EXPIRY ?? "15m"
+      PORT: process.env.PORT ?? 8085,
+      APP_ENV: process.env.APP_ENV ?? "prod",
+      DB_URL: process.env.DB_URL ?? "mongodb+srv://sapumalwijekoon4:GRZVtAmSR10ZU3YY@core.hifhwqg.mongodb.net/",
+      JWT_SECRET: process.env.JWT_SECRET ?? "super-key",
+      ACCESS_TOKEN_EXPIRY: process.env.ACCESS_TOKEN_EXPIRY ?? "1d"
     };
   }
 }

@@ -134,3 +134,5 @@ dist
 # firebase config
 firebase-config.json
 .DS_Store
+# Local Netlify folder
+.netlify

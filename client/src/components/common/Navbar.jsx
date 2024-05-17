@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { useDispatch } from "react-redux";
@@ -7,35 +7,76 @@ import { clearAuthUser } from "@/store/user.js";
 const Navbar = () => {
     const navigate = useNavigate();
     const dispatch = useDispatch();
-
-    const token = localStorage.getItem("token");
+    const [isMenuOpen, setIsMenuOpen] = useState(false);
 
     const handleLogout = () => {
         localStorage.removeItem("token");
-        dispatch(clearAuthUser);
+        dispatch(clearAuthUser());
         navigate("/login");
-    }
+    };
 
     return (
-        <header className="flex items-center h-14 px-4 border-b bg-white md:px-6 dark:bg-gray-950">
-            <Link to="/" className="flex items-center gap-2 mr-4">
+        <header className="flex items-center justify-between h-14 px-4 border-b bg-white md:px-6 dark:bg-gray-950">
+            <Link to="/" className="flex items-center gap-2">
                 <SunIcon className="w-5 h-5 fill-current" />
                 <span className="font-semibold">Astro Snap</span>
             </Link>
-            <nav className="hidden md:flex items-center space-x-4 flex-1">
-                <Link to="/astronomy-picture-of-the-day" className="font-medium">Astronomy Picture of the Day</Link>
-                <Link to="/mars-rover-photo-gallery" className="font-medium">Mars Rover Photo Gallery</Link>
-                <Link to="/live-space-missions-tracker" className="font-medium">Live Space Missions Tracker</Link>
-                <Link to="/educational-news" className="font-medium">Educational News</Link>
+            <button
+                className="md:hidden"
+                onClick={() => setIsMenuOpen(!isMenuOpen)}
+            >
+                {isMenuOpen ? <CloseIcon className="w-6 h-6" /> : <MenuIcon className="w-6 h-6" />}
+            </button>
+            <nav className={`absolute top-14 left-0 w-full bg-white dark:bg-gray-950 md:static md:flex md:items-center md:space-x-4 flex-1 ${isMenuOpen ? 'block' : 'hidden'}`}>
+                <Link to="/astronomy-picture-of-the-day" className="block py-2 px-4 text-center font-medium">Astronomy Picture of the Day</Link>
+                <Link to="/mars-rover-photo-gallery" className="block py-2 px-4 text-center font-medium">Mars Rover Photo Gallery</Link>
+                <Link to="/live-space-missions-tracker" className="block py-2 px-4 text-center font-medium">Live Space Missions Tracker</Link>
+                <Link to="/educational-news" className="block py-2 px-4 text-center font-medium">Educational News</Link>
+                {localStorage.getItem("token") && (
+                    <Button className="md:ml-auto block w-full md:w-auto text-center bg-red-800 text-white hover:bg-red-700 py-2 px-4" onClick={handleLogout}>Logout</Button>
+                )}
             </nav>
-                {
-                    localStorage.getItem("token") ? (
-                        <Button className="bg-red-800 text-white hover:bg-red-700" onClick={handleLogout}>Logout</Button>
-                    ) : (
-                        <Link to="/login">Login</Link>
-                    )
-                }
+            {!localStorage.getItem("token") && (
+                <Link to="/login" className="hidden md:block md:ml-auto">Login</Link>
+            )}
         </header>
+    );
+}
+
+function MenuIcon(props) {
+    return (
+        <svg
+            {...props}
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+        >
+            <path d="M3 12h18" />
+            <path d="M3 6h18" />
+            <path d="M3 18h18" />
+        </svg>
+    );
+}
+
+function CloseIcon(props) {
+    return (
+        <svg
+            {...props}
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+        >
+            <line x1="18" y1="6" x2="6" y2="18" />
+            <line x1="6" y1="6" x2="18" y2="18" />
+        </svg>
     );
 }
 
